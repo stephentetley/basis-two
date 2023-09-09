@@ -132,27 +132,18 @@ mod Basis.Text.Collator {
         let c = getInstance();
         Collator(c)
 
-    /// Just a test...
-    pub def hasDecompositionMode(x: {| _}): Option[DecompositionMode] = typematch x {
-        case r: {decomposition = DecompositionMode | _} => Some(r.decomposition)
-        case _: _ => None
-    }
+
+
+    pub type alias CollatorBuilder = ##java.text.Collator -> Unit \ IO
 
     ///
     /// Get a Collator with the locale of the JVM.
     ///
-    pub def getInstanceWith(decomposition: {decomposition = Option[DecompositionMode]}, strength: {strength = Option[Strength]}): Collator \ IO =
+    pub def getInstanceWith(build: CollatorBuilder): Collator \ IO =
         import static java.text.Collator.getInstance(): ##java.text.Collator \ IO;
-        let c = getInstance();
-        match decomposition.decomposition {
-            case Some(m) => setDecompositionMode!(m, c)
-            case _       => ()
-        };
-        match strength.strength {
-            case Some(s) => setStrength!(s, c)
-            case _       => ()
-        };
-        Collator(c)
+        let c1 = getInstance();
+        build(c1);
+        Collator(c1)
 
     pub def getInstanceWithLocale(loc: Locale): Collator =
         import static java.text.Collator.getInstance(##java.util.Locale): ##java.text.Collator \ {};
@@ -160,20 +151,11 @@ mod Basis.Text.Collator {
         let c1 = getInstance(loc1);
         Collator(c1)
 
-    pub def getInstanceWithLocaleWith(loc: Locale, 
-                                        decomposition: {decomposition = Option[DecompositionMode]}, 
-                                        strength: {strength = Option[Strength]}): Collator \ IO =
+    pub def getInstanceWithLocaleWith(loc: Locale, build: CollatorBuilder): Collator \ IO =
         import static java.text.Collator.getInstance(##java.util.Locale): ##java.text.Collator \ {};
         let Locale(loc1) = loc;
         let c1 = getInstance(loc1);
-        match decomposition.decomposition {
-            case Some(m) => setDecompositionMode!(m, c1)
-            case _       => ()
-        };
-        match strength.strength {
-            case Some(s) => setStrength!(s, c1)
-            case _       => ()
-        };
+        build(c1);
         Collator(c1)
 
 
@@ -208,16 +190,19 @@ mod Basis.Text.Collator {
         let Collator(c1) = c;
         getStrength(c1) |> strengthFromJava
 
-    /// Imperative, but not run after initialization
-    def setDecompositionMode!(mode: DecompositionMode, c: ##java.text.Collator): Unit \ IO =
-        import java.text.Collator.setDecomposition(Int32): Unit \ IO;
-        let mode1 = decompositionModeToJava(mode);
-        setDecomposition(c, mode1)
+
 
     /// Imperative, but not run after initialization
-    def setStrength!(strength: Strength, c: ##java.text.Collator): Unit \ IO =
+    pub def setDecompositionMode!(mode: DecompositionMode): CollatorBuilder = col -> 
+        import java.text.Collator.setDecomposition(Int32): Unit \ IO;
+        let mode1 = decompositionModeToJava(mode);
+        setDecomposition(col, mode1)
+
+
+    /// Imperative, but not run after initialization
+    pub def setStrength!(strength: Strength): CollatorBuilder = col -> 
         import java.text.Collator.setStrength(Int32): Unit \ IO;
         let strength1 = strengthToJava(strength);
-        setStrength(c, strength1)
+        setStrength(col, strength1)
 
 }
