@@ -59,24 +59,27 @@ mod Basis.Text.RuleBasedCollator {
         Collator(c1)
 
     ///
-    /// Test equality of strings `s1` and `s2` with the collator `x``.
+    /// Test equality of strings `s1` and `s2` with the rule based collator `rbc`.
     ///
     pub def equals(rbc: RuleBasedCollator, s1: String, s2: String): Bool = 
-        Basis.Text.Collator.equals(asCollator(rbc), s1, s2)
+        import java.text.RuleBasedCollator.equals(String, String): Bool \ {};
+        let RuleBasedCollator(rbc1) = rbc;
+        equals(rbc1, s1, s2)
 
 
     ///
-    /// Compare strings `s1` and `s2` with the collator `x``.
+    /// Compare strings `s1` and `s2` with the collator `rbc`.
     ///
     pub def compare(rbc: RuleBasedCollator, s1: String, s2: String): Comparison = 
-        Basis.Text.Collator.compare(asCollator(rbc), s1, s2)
+        import java.text.RuleBasedCollator.compare(String, String): Int32 \ {};
+        let RuleBasedCollator(rbc1) = rbc;
+        compare(rbc1, s1, s2) |> Comparison.fromInt32
 
 
-    // pub def getDecomposition(c: RuleBasedCollator): DecompositionMode =
-    //     Interop.Text.SubCollator.toCollator(c) |> Basis.Text.Collator.getDecomposition
-            
-    // pub def getStrength(c: RuleBasedCollator): CollatorStrength =
-    //     Interop.Text.SubCollator.toCollator(c) |> Basis.Text.Collator.getStrength
+    pub def getRules(rbc: RuleBasedCollator): String =
+        import java.text.RuleBasedCollator.getRules(): String \ {};
+        let RuleBasedCollator(rbc1) = rbc;
+        getRules(rbc1)
             
 
 

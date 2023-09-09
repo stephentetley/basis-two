@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Stephen Tetley
+ * Copyright 2023 Stephen Tetley
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -78,17 +78,17 @@ mod Basis.IO.Path {
     ///
     /// Returns a new Path.
     ///
-    pub def new(s: String): Result[String, Path] = newWith(s, Nil)
+    pub def new(s: String): Result[String, Path] = newWithTails(s, Nil)
 
 
     ///
     /// Returns a new Path.
     ///
-    pub def newWith(s: String, l: List[String]): Result[String, Path] =
+    pub def newWithTails(s: String, l: List[String]): Result[String, Path] =
         Result.tryCatch(_ -> region rc {
-            import static java.nio.file.Path.of(String, Array[String, rc]): ##java.nio.file.Path \ rc as of1;
+            import static java.nio.file.Path.of(String, Array[String, rc]): ##java.nio.file.Path \ rc as ofPath;
             let arr = List.toArray(rc, l);
-            Path(of1(s, arr))
+            Path(ofPath(s, arr))
         })
 
 
@@ -113,7 +113,39 @@ mod Basis.IO.Path {
         let Path(path1) = path;
         isAbsolute(path1)
 
-    pub def isRelative(path: Path): Bool = not isAbsolute(path)
+    pub def isRelative(path: Path): Bool = 
+        not isAbsolute(path)
+
+    ///
+    /// Returns `true` if the filepath `path` starts with the Path `prefix`.
+    ///
+    pub def startsWith(prefix: {prefix = Path}, path: Path): Bool =
+        import java.nio.file.Path.startsWith(##java.nio.file.Path): Bool \ {};
+        let Path(path1) = path;
+        let Path(prefix1) = prefix.prefix;
+        startsWith(path1, prefix1)
+
+    ///
+    /// Returns `true` if the filepath `path` ends with the Path `suffix`.
+    ///
+    pub def endsWith(suffix: {suffix = Path}, path: Path): Bool =
+        import java.nio.file.Path.endsWith(##java.nio.file.Path): Bool \ {};
+        let Path(path1) = path;
+        let Path(suffix1) = suffix.suffix;
+        endsWith(path1, suffix1)
+
+
+    pub def getNameAt(ix: Int32, path: Path): Result[String, Path] =
+        Result.tryCatch(_ -> {
+            import java.nio.file.Path.getName(Int32): ##java.nio.file.Path \ {};
+            let Path(path1) = path;
+            getName(path1, ix) |> Path
+        })
+
+    pub def getNameCount(path: Path): Int32 =
+        import java.nio.file.Path.getNameCount(): Int32 \ {};
+        let Path(path1) = path;
+        getNameCount(path1)
 
 
     pub def getRoot(path: Path): Option[Path] =
@@ -151,12 +183,7 @@ mod Basis.IO.Path {
         let Path(p2) = path2.path2;
         Path(relativize(p1, p2))
 
-/*
-    def filePath1(s: String): Path = match newPath(s) {
-        case Ok(p1)  => p1
-        case Err(_)  => empty()
-    }
-*/
+
 /*
     /// pub def filePathConcat(l: List[String]): Path =
     ///     region r {
@@ -251,31 +278,8 @@ mod Basis.IO.Path {
     pub def makeRelative(path1: Path, path2: Path): Path =
         Basis.IO.Path.relativize(path1, path2)
 
-    ///
-    /// Returns `true` if the Path `path1` starts with the string `path2`.
-    ///
-    pub def startsWith(prefix: {prefix = Path}, path2: Path): Bool =
-        Basis.IO.Path.startsWith(prefix = prefix.prefix, path2)
 
 
-    pub def getNameCount(path: Path): Int32 =
-        match getRoot(path) {
-            case Some(_) => getNameCountHelper(path) + 1
-            case None => getNameCountHelper(path)
-        }
-
-    /// Does not count root, if present.
-    def getNameCountHelper(path: Path): Int32 =
-        Basis.IO.Path.getNameCount(path)
-
-    pub def getNameAt(path: Path, ix: Int32): Option[Path] =
-        if (ix < 0)
-            None
-        else
-            match getRoot(path) {
-                case Some(_) => if (ix == 0) getRoot(path) else getNameAtHelper(path, ix-1)
-                case None => getNameAtHelper(path, ix)
-            }
     ///
     /// Helper function for `getNameAt`.
     ///

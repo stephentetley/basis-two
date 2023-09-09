@@ -163,7 +163,7 @@ mod Basis.Text.Collator {
 
 
     ///
-    /// Test equality of strings `s1` and `s2` with the collator `col``.
+    /// Test equality of strings `s1` and `s2` with the collator `col`.
     ///
     pub def equals(col: Collator, s1: String, s2: String): Bool =
         import java.text.Collator.equals(String, String): Bool \ {};
