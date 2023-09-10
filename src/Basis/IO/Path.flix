@@ -429,6 +429,8 @@ mod Basis.IO.Path {
             }
 */
 /*
+    // Better in a FileSystems module?
+    
     def pathMatcherMatches(path: Path, syntaxAndPatt: String): Result[String, Bool] \ IO =
         import static java.nio.file.FileSystems.getDefault(): ##java.nio.file.FileSystem \ IO;
         import java.nio.file.FileSystem.getPathMatcher(String): ##java.nio.file.PathMatcher \ IO;
