@@ -30,6 +30,8 @@ mod Basis.Text {
 mod Basis.Text.RuleBasedCollator {
 
     use Basis.Text.RuleBasedCollator.{RuleBasedCollator}
+    use Basis.Text.CollationKey
+    use Basis.Text.CollationKey.{CollationKey}
     use Basis.Text.Collator
     use Basis.Text.Collator.{Collator}
     use Basis.Text.Collator.CollatorBuilder
@@ -82,5 +84,9 @@ mod Basis.Text.RuleBasedCollator {
         getRules(rbc1)
             
 
+    pub def getCollationKey(src: String, rbc: RuleBasedCollator): CollationKey =
+        import java.text.RuleBasedCollator.getCollationKey(String): ##java.text.CollationKey \ {};
+        let RuleBasedCollator(rbc1) = rbc;
+        CollationKey(getCollationKey(rbc1, src))
 
 }

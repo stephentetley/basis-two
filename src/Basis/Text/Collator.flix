@@ -31,6 +31,8 @@ mod Basis.Text.Collator {
     use Locale
     use Locale.{Locale}
     
+    use Basis.Text.CollationKey
+    use Basis.Text.CollationKey.{CollationKey}
     use Basis.Text.Collator
     use Basis.Text.Collator.{Collator}
     use Basis.Text.Collator.DecompositionMode
@@ -191,6 +193,10 @@ mod Basis.Text.Collator {
         getStrength(c1) |> strengthFromJava
 
 
+    pub def getCollationKey(src: String, c: Collator): CollationKey =
+        import java.text.Collator.getCollationKey(String): ##java.text.CollationKey \ {};
+        let Collator(c1) = c;
+        CollationKey(getCollationKey(c1, src))
 
     /// Imperative, but not run after initialization
     pub def setDecompositionMode!(mode: DecompositionMode): CollatorBuilder = col -> 
