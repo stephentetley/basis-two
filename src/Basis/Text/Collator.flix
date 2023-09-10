@@ -205,4 +205,5 @@ mod Basis.Text.Collator {
         let strength1 = strengthToJava(strength);
         setStrength(col, strength1)
 
+
 }
