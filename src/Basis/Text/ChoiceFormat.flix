@@ -42,15 +42,22 @@ mod Basis.Text.ChoiceFormat {
 
     ///
     /// Returns a new ChoiceFormat.
+    /// The limits should be in ascending order.
     ///
-    pub def newWithChoices(limits: List[Float64], formats: List[String]): Result[String, ChoiceFormat] =
+    pub def newWithChoices(choices: List[(Float64, String)]): Result[String, ChoiceFormat] =
         Result.tryCatch(_ -> region rc {
             import new java.text.ChoiceFormat(Array[Float64, rc], Array[String, rc]): ##java.text.ChoiceFormat \ {} as newChoiceFormat;
+            let (limits, formats) = List.unzip(choices);
             let limits1 = List.toArray(rc, limits);
             let formats1 = List.toArray(rc, formats);
             ChoiceFormat(newChoiceFormat(limits1, formats1))
         })
 
+
+    pub def hashCode(df: ChoiceFormat): Int32 =
+        import java.text.ChoiceFormat.hashCode(): Int32 \ {};
+        let ChoiceFormat(df1) = df;
+        hashCode(df1)
 
     pub def formatInt64(fmt: ChoiceFormat, n: Int64): Result[String, String] = 
         Result.tryCatch(_ -> {
@@ -65,6 +72,31 @@ mod Basis.Text.ChoiceFormat {
             let ChoiceFormat(fmt1) = fmt;
             format(fmt1, d)
         })
+
+    pub def parseInt64(fmt: ChoiceFormat, s: String): Result[String, Int64] = 
+        Result.tryCatch(_ -> {
+            import java.text.NumberFormat.parse(String): ##java.lang.Number \ {};
+            import java.lang.Number.longValue(): Int64 \ {};
+            let ChoiceFormat(fmt1) = fmt;
+            parse(checked_cast(fmt1), s) |> longValue
+        })
+
+
+    pub def nextFloat64(d: Float64): Float64 = 
+        import static java.text.ChoiceFormat.nextDouble(Float64): Float64 \ {};
+        nextDouble(d)
+
+    pub def previousFloat64(d: Float64): Float64 = 
+        import static java.text.ChoiceFormat.previousDouble(Float64): Float64 \ {};
+        previousDouble(d)
+
+
+    pub def getLimits(fmt: ChoiceFormat): Vector[Float64] = region rc {
+        import java.text.ChoiceFormat.getLimits(): Array[Float64, rc] \ {};
+        let _ = Array#{} @ rc;
+        let ChoiceFormat(fmt1) = fmt;
+        getLimits(fmt1) |> Array.toVector
+    }
 
     ///
     pub def toPattern(cf: ChoiceFormat): String =
