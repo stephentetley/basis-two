@@ -29,6 +29,8 @@ mod Basis.IO.ByteBuffer {
 
     use Basis.IO.ByteBuffer
     use Basis.IO.ByteBuffer.{ByteBuffer}
+    use Basis.IO.ByteOrder
+    
 
 
     ///
@@ -50,6 +52,18 @@ mod Basis.IO.ByteBuffer {
         import java.nio.ByteBuffer.flip(): ##java.nio.ByteBuffer \ r;
         let ByteBuffer(bb1) = bb;
         flip(bb1);
+        ()
+
+    pub def getByteOrder(bb: ByteBuffer[r]): ByteOrder \ r =
+        import java.nio.ByteBuffer.order(): ##java.nio.ByteOrder \ r;
+        let ByteBuffer(bb1) = bb;
+        order(bb1) |> Basis.IO.ByteOrder.byteOrderFromJava
+
+    pub def setByteOrder!(bo: ByteOrder, bb: ByteBuffer[r]): Unit \ r =
+        import java.nio.ByteBuffer.order(##java.nio.ByteOrder): ##java.nio.ByteBuffer \ r;
+        let ByteBuffer(bb1) = bb;
+        let nbo = Basis.IO.ByteOrder.byteOrderToJava(bo);
+        order(bb1, nbo);
         ()
 
     pub def get!(bb: ByteBuffer[r]): Result[String, Int8] \ r =

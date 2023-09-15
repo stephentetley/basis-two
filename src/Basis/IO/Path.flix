@@ -18,7 +18,7 @@
 mod Basis.IO {
 
     ///
-    /// Represents a FilePath.
+    /// Represents a Path.
     /// Interface / Immutable
     pub enum Path(##java.nio.file.Path)
 
@@ -51,6 +51,8 @@ mod Basis.IO.Path {
 
     use Basis.IO.Path
     use Basis.IO.Path.{Path}
+    use Basis.IO.File
+    use Basis.IO.File.{File}
 
 
     pub def toString(path: Path): String = 
@@ -92,6 +94,12 @@ mod Basis.IO.Path {
         })
 
 
+    pub def toFile(path: Path): Result[String, File] =
+        Result.tryCatch(_ -> {
+            import java.nio.file.Path.toFile(): ##java.io.File \ {};
+            let Path(path1) = path;
+            File(toFile(path1))
+        })
 
     pub def normalize(path: Path): Path =
         import java.nio.file.Path.normalize(): ##java.nio.file.Path \ {};

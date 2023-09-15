@@ -43,7 +43,7 @@ mod Basis.IO.ByteOrder {
         let y1 = checked_cast(y);
         equals(x1, y1)
 
-    def byteOrderFromJava(nbo: ##java.nio.ByteOrder): ByteOrder= 
+    pub def byteOrderFromJava(nbo: ##java.nio.ByteOrder): ByteOrder= 
         import static get java.nio.ByteOrder.BIG_ENDIAN: ##java.nio.ByteOrder \ {} as get_BIG_ENDIAN;
         import static get java.nio.ByteOrder.LITTLE_ENDIAN: ##java.nio.ByteOrder \ {} as get_LITTLE_ENDIAN;
         match nbo {
