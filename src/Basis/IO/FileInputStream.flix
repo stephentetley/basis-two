@@ -17,47 +17,49 @@
 
 mod Basis.IO {
 
-    pub enum FileOutputStream(##java.io.FileOutputStream)
+    pub enum FileInputStream(##java.io.FileInputStream)
 
 }
 
-mod Basis.IO.FileOutputStream {
+mod Basis.IO.FileInputStream {
 
     use Monad.{>>=}
 
-    use Basis.IO.FileOutputStream
-    use Basis.IO.FileOutputStream.{FileOutputStream}
+    use Basis.IO.FileInputStream
+    use Basis.IO.FileInputStream.{FileInputStream}
     use Basis.IO.Path
     use Basis.IO.Path.{Path}
     use Basis.IO.File.{File}
     use Basis.IO.FileChannel
     use Basis.IO.FileChannel.{FileChannel}
 
-    pub def new(path: Path): Result[String, FileOutputStream] \ IO = 
+    pub def new(path: Path): Result[String, FileInputStream] \ IO = 
         Basis.IO.Path.toFile(path) >>= file ->
         Result.tryCatch(_ -> {
-            import new java.io.FileOutputStream(##java.io.File): ##java.io.FileOutputStream \ IO as newFileOutputStream;
+            import new java.io.FileInputStream(##java.io.File): ##java.io.FileInputStream \ IO as newFileInputStream;
             let File(file1) = file;
-            FileOutputStream(newFileOutputStream(file1))
+            FileInputStream(newFileInputStream(file1))
         })
 
-    pub def getChannel(s: FileOutputStream): FileChannel \ IO = 
-        import java.io.FileOutputStream.getChannel(): ##java.nio.channels.FileChannel \ IO;
-        let FileOutputStream(s1) = s;
+
+    pub def getChannel(s: FileInputStream): FileChannel \ IO = 
+        import java.io.FileInputStream.getChannel(): ##java.nio.channels.FileChannel \ IO;
+        let FileInputStream(s1) = s;
         FileChannel(getChannel(s1))
 
-    pub def writeByte!(b: Int32, s: FileOutputStream): Result[String, Unit] \ IO = 
+    pub def close!(s: FileInputStream): Result[String, Unit] \ IO = 
         Result.tryCatch(_ -> {
-            import java.io.FileOutputStream.write(Int32): Unit \ IO;
-            let FileOutputStream(s1) = s;
-            write(s1, b)
-        })
-
-    pub def close!(s: FileOutputStream): Result[String, Unit] \ IO = 
-        Result.tryCatch(_ -> {
-            import java.io.FileOutputStream.close(): Unit \ IO;
-            let FileOutputStream(s1) = s;
+            import java.io.FileInputStream.close(): Unit \ IO;
+            let FileInputStream(s1) = s;
             close(s1)
         })
+
+    pub def readByte!(s: FileInputStream): Result[String, Int32] \ IO = 
+        Result.tryCatch(_ -> {
+            import java.io.FileInputStream.read(): Int32 \ IO;
+            let FileInputStream(s1) = s;
+            read(s1)
+        })
+
 
 }
