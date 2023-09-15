@@ -24,7 +24,7 @@ mod Basis.IO {
 
 }
 
-mod Basis.IO.ButeBuffer {
+mod Basis.IO.ByteBuffer {
 
 
     use Basis.IO.ByteBuffer
@@ -51,4 +51,33 @@ mod Basis.IO.ButeBuffer {
         let ByteBuffer(bb1) = bb;
         flip(bb1);
         ()
+
+    pub def get!(bb: ByteBuffer[r]): Result[String, Int8] \ r =
+        Result.tryCatch(_ -> {
+            import java.nio.ByteBuffer.get(): Int8 \ r;
+            let ByteBuffer(bb1) = bb;
+            get(bb1)
+        })
+
+    pub def getAt(ix: Int32, bb: ByteBuffer[r]): Result[String, Int8] \ r =
+        Result.tryCatch(_ -> {
+            import java.nio.ByteBuffer.get(Int32): Int8 \ r;
+            let ByteBuffer(bb1) = bb;
+            get(bb1, ix)
+        })
+
+    pub def getChar!(bb: ByteBuffer[r]): Result[String, Char] \ r =
+        Result.tryCatch(_ -> {
+            import java.nio.ByteBuffer.getChar(): Char \ r;
+            let ByteBuffer(bb1) = bb;
+            getChar(bb1)
+        })
+
+    pub def getCharAt(ix: Int32, bb: ByteBuffer[r]): Result[String, Char] \ r =
+        Result.tryCatch(_ -> {
+            import java.nio.ByteBuffer.getChar(Int32): Char \ r;
+            let ByteBuffer(bb1) = bb;
+            getChar(bb1, ix)
+        })
+
 }
