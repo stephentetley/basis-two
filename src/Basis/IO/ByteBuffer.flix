@@ -45,26 +45,49 @@ mod Basis.IO.ByteBuffer {
     pub def clear!(bb: ByteBuffer[r]): Unit \ r =
         import java.nio.ByteBuffer.clear(): ##java.nio.ByteBuffer \ r;
         let ByteBuffer(bb1) = bb;
-        clear(bb1);
-        ()
+        discard clear(bb1)
+
+    pub def compact!(bb: ByteBuffer[r]): Result[String, Unit] \ r =
+        Result.tryCatch(_ -> {
+            import java.nio.ByteBuffer.compact(): ##java.nio.ByteBuffer \ r;
+            let ByteBuffer(bb1) = bb;
+            discard compact(bb1)
+        })
 
     pub def flip!(bb: ByteBuffer[r]): Unit \ r =
         import java.nio.ByteBuffer.flip(): ##java.nio.ByteBuffer \ r;
         let ByteBuffer(bb1) = bb;
-        flip(bb1);
-        ()
+        discard flip(bb1)
+
+
+    pub def mark!(bb: ByteBuffer[r]): Unit \ r =
+        import java.nio.ByteBuffer.mark(): ##java.nio.ByteBuffer \ r;
+        let ByteBuffer(bb1) = bb;
+        discard mark(bb1)
+
 
     pub def reset!(bb: ByteBuffer[r]): Unit \ r =
         import java.nio.ByteBuffer.reset(): ##java.nio.ByteBuffer \ r;
         let ByteBuffer(bb1) = bb;
-        reset(bb1);
-        ()
+        discard reset(bb1)
 
     pub def rewind!(bb: ByteBuffer[r]): Unit \ r =
         import java.nio.ByteBuffer.rewind(): ##java.nio.ByteBuffer \ r;
         let ByteBuffer(bb1) = bb;
-        rewind(bb1);
-        ()
+        discard rewind(bb1)
+
+
+    pub def position(bb: ByteBuffer[r]): Int32 \ r =
+        import java.nio.ByteBuffer.position(): Int32\ r;
+        let ByteBuffer(bb1) = bb;
+        position(bb1)
+
+    pub def setPosition!(pos: Int32, bb: ByteBuffer[r]): Result[String, Unit] \ r =
+        Result.tryCatch(_ -> {
+            import java.nio.ByteBuffer.position(Int32): ##java.nio.ByteBuffer \ r;
+            let ByteBuffer(bb1) = bb;
+            discard position(bb1, pos)
+        })
 
     pub def getByteOrder(bb: ByteBuffer[r]): ByteOrder \ r =
         import java.nio.ByteBuffer.order(): ##java.nio.ByteOrder \ r;
@@ -75,8 +98,7 @@ mod Basis.IO.ByteBuffer {
         import java.nio.ByteBuffer.order(##java.nio.ByteOrder): ##java.nio.ByteBuffer \ r;
         let ByteBuffer(bb1) = bb;
         let nbo = Basis.IO.ByteOrder.byteOrderToJava(bo);
-        order(bb1, nbo);
-        ()
+        discard order(bb1, nbo)
 
     pub def hasArray(bb: ByteBuffer[r]): Bool \ r =
         import java.nio.ByteBuffer.hasArray(): Bool \ r;
@@ -88,6 +110,14 @@ mod Basis.IO.ByteBuffer {
         import java.nio.ByteBuffer.isDirect(): Bool \ r;
         let ByteBuffer(bb1) = bb;
         isDirect(bb1)
+
+    pub def array(bb: ByteBuffer[r]): Result[String, Array[Int8, r]] \ r =
+        Result.tryCatch(_ -> {
+            import java.nio.ByteBuffer.array(): Array[Int8, r] \ r;
+            let ByteBuffer(bb1) = bb;
+            array(bb1)
+        })
+
 
     pub def getChar!(bb: ByteBuffer[r]): Result[String, Char] \ r =
         Result.tryCatch(_ -> {

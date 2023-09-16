@@ -24,6 +24,7 @@ mod Basis.IO {
 mod Basis.IO.FileOutputStream {
 
     use Monad.{>>=}
+    use IOError.Generic
 
     use Basis.IO.FileOutputStream
     use Basis.IO.FileOutputStream.{FileOutputStream}
@@ -33,9 +34,9 @@ mod Basis.IO.FileOutputStream {
     use Basis.IO.FileChannel
     use Basis.IO.FileChannel.{FileChannel}
 
-    pub def new(path: Path): Result[String, FileOutputStream] \ IO = 
-        Basis.IO.Path.toFile(path) >>= file ->
-        Result.tryCatch(_ -> {
+    pub def new(path: Path): Result[IOError, FileOutputStream] \ IO = 
+        Result.mapErr(Generic, Basis.IO.Path.toFile(path)) >>= file ->
+        IOError.tryCatch(_ -> {
             import new java.io.FileOutputStream(##java.io.File): ##java.io.FileOutputStream \ IO as newFileOutputStream;
             let File(file1) = file;
             FileOutputStream(newFileOutputStream(file1))
@@ -46,15 +47,15 @@ mod Basis.IO.FileOutputStream {
         let FileOutputStream(s1) = s;
         FileChannel(getChannel(s1))
 
-    pub def writeByte!(b: Int32, s: FileOutputStream): Result[String, Unit] \ IO = 
-        Result.tryCatch(_ -> {
+    pub def writeByte!(b: Int32, s: FileOutputStream): Result[IOError, Unit] \ IO = 
+        IOError.tryCatch(_ -> {
             import java.io.FileOutputStream.write(Int32): Unit \ IO;
             let FileOutputStream(s1) = s;
             write(s1, b)
         })
 
-    pub def close!(s: FileOutputStream): Result[String, Unit] \ IO = 
-        Result.tryCatch(_ -> {
+    pub def close!(s: FileOutputStream): Result[IOError, Unit] \ IO = 
+        IOError.tryCatch(_ -> {
             import java.io.FileOutputStream.close(): Unit \ IO;
             let FileOutputStream(s1) = s;
             close(s1)
