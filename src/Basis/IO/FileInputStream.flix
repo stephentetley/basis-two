@@ -33,6 +33,8 @@ mod Basis.IO.FileInputStream {
     use Basis.IO.File.{File}
     use Basis.IO.FileChannel
     use Basis.IO.FileChannel.{FileChannel}
+    use Basis.IO.InputStream
+    use Basis.IO.InputStream.{InputStream}
 
     pub def new(path: Path): Result[IOError, FileInputStream] \ IO = 
         Result.mapErr(Generic, Basis.IO.Path.toFile(path)) >>= file ->
@@ -41,6 +43,11 @@ mod Basis.IO.FileInputStream {
             let File(file1) = file;
             FileInputStream(newFileInputStream(file1))
         })
+
+    /// Should this be in IO ?
+    pub def asInputStream(s: FileInputStream): InputStream[Static] \ IO = 
+        let FileInputStream(s1) = s;
+        checked_ecast(InputStream(checked_cast(s1)))
 
 
     pub def getChannel(s: FileInputStream): FileChannel \ IO = 

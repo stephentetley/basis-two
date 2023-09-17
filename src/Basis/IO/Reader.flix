@@ -18,25 +18,13 @@
 mod Basis.IO {
 
     ///
-    /// Represents a File.
+    /// Represents a Reader.
     ///
-    pub enum File(##java.io.File)
+    pub enum Reader[_: Region](##java.io.Reader)
 
 }
 
-mod Basis.IO.File {
+mod Basis.IO.Reader {
 
-
-    use Basis.IO.File
-    use Basis.IO.File.{File}
-    use Basis.IO.Path
-    use Basis.IO.Path.{Path}
-
-    pub def toPath(file: File): Result[String, Path] =
-        Result.tryCatch(_ -> {
-            import java.io.File.toPath(): ##java.nio.file.Path \ {};
-            let File(file1) = file;
-            Path(toPath(file1))
-        })
 
 }
