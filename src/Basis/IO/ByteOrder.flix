@@ -37,13 +37,14 @@ mod Basis.IO.ByteOrder {
             case LittleEndian => get_LITTLE_ENDIAN()
         }
 
+    /// Not an Enum in Java.
     def primEquals(x: ##java.nio.ByteOrder, y: ##java.nio.ByteOrder): Bool =
         import java.lang.Object.equals(##java.lang.Object): Bool \ {};
         let x1 = checked_cast(x);
         let y1 = checked_cast(y);
         equals(x1, y1)
 
-    pub def byteOrderFromJava(nbo: ##java.nio.ByteOrder): ByteOrder= 
+    pub def byteOrderFromJava(nbo: ##java.nio.ByteOrder): ByteOrder = 
         import static get java.nio.ByteOrder.BIG_ENDIAN: ##java.nio.ByteOrder \ {} as get_BIG_ENDIAN;
         import static get java.nio.ByteOrder.LITTLE_ENDIAN: ##java.nio.ByteOrder \ {} as get_LITTLE_ENDIAN;
         match nbo {
