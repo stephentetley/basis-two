@@ -1,5 +1,5 @@
 [package]
-name        = "basis-two"
+name        = "platform-basis"
 description = "Flix wrappers over the JDK modules"
 version     = "0.1.0"
 flix        = "0.40.0"

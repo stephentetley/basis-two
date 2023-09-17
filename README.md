@@ -1,5 +1,8 @@
-# basis-two
+# platform-basis
 
-Flix wrappers over JDK classes - code extracted from the projects `interop-base` and `basis-base`.
+Flix wrappers over JDK classes - this is intended to simplify and 
+replace the projects `interop-base` and `basis-base`.
+
+
 
 License: Apache 2.0
