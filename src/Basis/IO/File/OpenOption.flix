@@ -28,4 +28,34 @@ mod Basis.IO.File.OpenOption {
     pub def nofollowLinks(): OpenOption = 
         Basis.IO.File.LinkOption.asOpenOption(Basis.IO.File.LinkOption.NofollowLinks)
 
+    pub def append(): OpenOption = 
+        Basis.IO.File.StandardOpenOption.asOpenOption(Basis.IO.File.StandardOpenOption.Append)
+
+    pub def create(): OpenOption = 
+        Basis.IO.File.StandardOpenOption.asOpenOption(Basis.IO.File.StandardOpenOption.Create)
+        
+    pub def createNew(): OpenOption = 
+        Basis.IO.File.StandardOpenOption.asOpenOption(Basis.IO.File.StandardOpenOption.CreateNew)
+        
+    pub def deleteOnClose(): OpenOption = 
+        Basis.IO.File.StandardOpenOption.asOpenOption(Basis.IO.File.StandardOpenOption.DeleteOnClose)
+
+    pub def dsync(): OpenOption =         
+        Basis.IO.File.StandardOpenOption.asOpenOption(Basis.IO.File.StandardOpenOption.Dsync)
+
+    pub def read(): OpenOption =         
+        Basis.IO.File.StandardOpenOption.asOpenOption(Basis.IO.File.StandardOpenOption.Read)
+
+    pub def sparse(): OpenOption =         
+        Basis.IO.File.StandardOpenOption.asOpenOption(Basis.IO.File.StandardOpenOption.Sparse)
+
+    pub def sync(): OpenOption =         
+        Basis.IO.File.StandardOpenOption.asOpenOption(Basis.IO.File.StandardOpenOption.Sync)
+        
+    pub def truncateExisting(): OpenOption = 
+        Basis.IO.File.StandardOpenOption.asOpenOption(Basis.IO.File.StandardOpenOption.TruncateExisting)
+
+    pub def write(): OpenOption =         
+        Basis.IO.File.StandardOpenOption.asOpenOption(Basis.IO.File.StandardOpenOption.Write)
+
 }

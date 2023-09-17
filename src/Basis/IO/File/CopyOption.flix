@@ -23,3 +23,19 @@ mod Basis.IO.File {
     pub enum CopyOption(##java.nio.file.CopyOption)
 
 }
+
+mod Basis.IO.File.CopyOption {
+
+    pub def nofollowLinks(): CopyOption = 
+        Basis.IO.File.LinkOption.asCopyOption(Basis.IO.File.LinkOption.NofollowLinks)
+        
+    pub def atomicMove(): CopyOption = 
+        Basis.IO.File.StandardCopyOption.asCopyOption(Basis.IO.File.StandardCopyOption.AtomicMove)
+
+    pub def copyAttributes(): CopyOption =
+        Basis.IO.File.StandardCopyOption.asCopyOption(Basis.IO.File.StandardCopyOption.CopyAttributes)
+
+    pub def replaceExisting(): CopyOption = 
+        Basis.IO.File.StandardCopyOption.asCopyOption(Basis.IO.File.StandardCopyOption.ReplaceExisting)
+
+}
