@@ -31,4 +31,37 @@ mod Basis.IO.InputStream {
     use Basis.IO.InputStream.{InputStream}
 
 
+    pub def close!(s: InputStream[r]): Result[String, Unit] \ r = 
+        Result.tryCatch(_ -> {
+            import java.io.InputStream.close(): Unit \ r;
+            let InputStream(s1) = s;
+            close(s1)
+        })
+
+
+    pub def readByte!(s: InputStream[r]): Result[String, Int32] \ r =
+        Result.tryCatch(_ -> {
+            import java.io.InputStream.read(): Int32 \ r;
+            let InputStream(s1) = s;
+            read(s1)
+        })
+
+    pub def readArray!(buf: Array[Int8, r1], 
+                        s: InputStream[r]): Result[String, Int32] \ {r, r1} =
+        Result.tryCatch(_ -> {
+            import java.io.InputStream.read(Array[Int8, r1]): Int32 \ {r, r1};
+            let InputStream(s1) = s;
+            read(s1, buf)
+        })
+
+    pub def readArrayWith!(destOffset: {destOffset = Int32}, 
+                            length: {length = Int32}, 
+                            buf: Array[Int8, r1], 
+                            s: InputStream[r]): Result[String, Int32] \ {r, r1} =
+        Result.tryCatch(_ -> {
+            import java.io.InputStream.read(Array[Int8, r1], Int32, Int32): Int32 \ {r, r1};
+            let InputStream(s1) = s;
+            read(s1, buf, destOffset.destOffset, length.length)
+        })
+
 }
