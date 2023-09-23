@@ -50,6 +50,14 @@ mod Basis.IO.OutputStreamWriter {
         let OutputStreamWriter(w1) = w;
         checked_ecast(Writer(checked_cast(w1)))
     
+
+    pub def close!(w: OutputStreamWriter[r]): Result[String, Unit] \ r = 
+        Result.tryCatch(_ -> {
+            import java.io.OutputStreamWriter.close(): Unit \ r;
+            let OutputStreamWriter(w1) = w;
+            close(w1)
+        })
+
     pub def writeChar!(b: Int32, w: OutputStreamWriter[r]): Result[String, Unit] \ r =
         Result.tryCatch(_ -> {
             import java.io.OutputStreamWriter.write(Int32): Unit \ r;

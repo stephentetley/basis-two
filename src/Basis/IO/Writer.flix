@@ -27,4 +27,41 @@ mod Basis.IO {
 mod Basis.IO.Writer {
 
 
+    pub def close!(w: Writer[r]): Result[String, Unit] \ r = 
+        Result.tryCatch(_ -> {
+            import java.io.Writer.close(): Unit \ r;
+            let Writer(w1) = w;
+            close(w1)
+        })
+
+    pub def flush!(w: Writer[r]): Result[String, Unit] \ r = 
+        Result.tryCatch(_ -> {
+            import java.io.Writer.close(): Unit \ r;
+            let Writer(w1) = w;
+            close(w1)
+        })
+
+    pub def appendChar!(c: Char, w: Writer[r]): Result[String, Unit] \ r = 
+        Result.tryCatch(_ -> {
+            import java.io.Writer.append(Char): ##java.io.Writer \ r;
+            let Writer(w1) = w;
+            discard append(w1, c)
+        })
+
+    pub def writeString!(s: String, w: Writer[r]): Result[String, Unit] \ r = 
+        Result.tryCatch(_ -> {
+            import java.io.Writer.write(String): Unit \ r;
+            let Writer(w1) = w;
+            write(w1, s)
+        })
+
+    pub def writeStringWith!(sourceOffset: {sourceOffset = Int32}, 
+                            length: {length = Int32}, 
+                            s: String, w: Writer[r]): Result[String, Unit] \ r = 
+        Result.tryCatch(_ -> {
+            import java.io.Writer.write(String, Int32, Int32): Unit \ r;
+            let Writer(w1) = w;
+            write(w1, s, sourceOffset.sourceOffset, length.length)
+        })
+
 }

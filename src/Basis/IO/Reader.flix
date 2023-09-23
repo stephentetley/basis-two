@@ -27,4 +27,51 @@ mod Basis.IO {
 mod Basis.IO.Reader {
 
 
+    pub def close!(r: Reader[r]): Result[String, Unit] \ r = 
+        Result.tryCatch(_ -> {
+            import java.io.Reader.close(): Unit \ r;
+            let Reader(r1) = r;
+            close(r1)
+        })
+
+    pub def ready(r: Reader[r]): Result[String, Bool] \ r =
+        Result.tryCatch(_ -> {
+            import java.io.Reader.ready(): Bool \ r;
+            let Reader(r1) = r;
+            ready(r1)
+        })
+
+    pub def reset!(r: Reader[r]): Result[String, Unit] \ r = 
+        Result.tryCatch(_ -> {
+            import java.io.Reader.reset(): Unit \ r;
+            let Reader(r1) = r;
+            reset(r1)
+        })
+
+    pub def readChar!(r: Reader[r]): Result[String, Int32] \ r =
+        Result.tryCatch(_ -> {
+            import java.io.Reader.read(): Int32 \ r;
+            let Reader(r1) = r;
+            read(r1)
+        })
+
+
+    pub def readCharArray!(destOffset: {destOffset = Int32}, 
+                            length: {length = Int32}, 
+                            buf: Array[Char, r1], 
+                            r: Reader[r]): Result[String, Int32] \ {r, r1} =
+        Result.tryCatch(_ -> {
+            import java.io.Reader.read(Array[Char, r1], Int32, Int32): Int32 \ {r, r1};
+            let Reader(r1) = r;
+            read(r1, buf, destOffset.destOffset, length.length)
+        })
+
+
+    pub def skip!(n: Int64, r: Reader[r]): Result[String, Int64] \ r = 
+        Result.tryCatch(_ -> {
+            import java.io.Reader.skip(Int64): Int64 \ r;
+            let Reader(r1) = r;
+            skip(r1, n)
+        })
+
 }
