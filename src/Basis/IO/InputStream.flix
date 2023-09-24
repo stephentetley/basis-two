@@ -31,6 +31,7 @@ mod Basis.IO.InputStream {
     use Basis.IO.InputStream
     use Basis.IO.InputStream.{InputStream}
 
+    /// Abstract / no constructors...
 
     pub def close!(s: InputStream[r]): Result[String, Unit] \ r = 
         Result.tryCatch(_ -> {
@@ -39,6 +40,20 @@ mod Basis.IO.InputStream {
             close(s1)
         })
 
+
+    pub def available(s: InputStream[r]): Result[String, Int32] \ r =
+        Result.tryCatch(_ -> {
+            import java.io.InputStream.available(): Int32 \ r;
+            let InputStream(s1) = s;
+            available(s1)
+        })
+
+    pub def reset!(s: InputStream[r]): Result[String, Unit] \ r =
+        Result.tryCatch(_ -> {
+            import java.io.InputStream.reset(): Unit \ r;
+            let InputStream(s1) = s;
+            reset(s1)
+        })
 
     pub def readByte!(s: InputStream[r]): Result[String, Int32] \ r =
         Result.tryCatch(_ -> {

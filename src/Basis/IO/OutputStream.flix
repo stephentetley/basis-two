@@ -19,6 +19,7 @@ mod Basis.IO {
 
     ///
     /// Represents an OutputStream.
+    /// Abstract class
     ///
     pub enum OutputStream[_: Region](##java.io.OutputStream)
 
@@ -30,6 +31,7 @@ mod Basis.IO.OutputStream {
     use Basis.IO.OutputStream
     use Basis.IO.OutputStream.{OutputStream}
 
+    /// Abstract / no constructors...
 
     pub def close!(s: OutputStream[r]): Result[String, Unit] \ r = 
         Result.tryCatch(_ -> {

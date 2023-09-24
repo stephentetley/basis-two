@@ -28,6 +28,8 @@ mod Basis.IO.FileOutputStream {
 
     use Basis.IO.FileOutputStream
     use Basis.IO.FileOutputStream.{FileOutputStream}
+    use Basis.IO.OutputStream
+    use Basis.IO.OutputStream.{OutputStream}
     use Basis.IO.Path
     use Basis.IO.Path.{Path}
     use Basis.IO.File.{File}
@@ -41,6 +43,12 @@ mod Basis.IO.FileOutputStream {
             let File(file1) = file;
             FileOutputStream(newFileOutputStream(file1))
         })
+
+    /// Should this be in IO ?
+    pub def asOutputStream(s: FileOutputStream): OutputStream[Static] \ IO = 
+        let FileOutputStream(s1) = s;
+        checked_ecast(OutputStream(checked_cast(s1)))
+
 
     pub def getChannel(s: FileOutputStream): FileChannel \ IO = 
         import java.io.FileOutputStream.getChannel(): ##java.nio.channels.FileChannel \ IO;
