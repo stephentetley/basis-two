@@ -19,6 +19,7 @@ mod Basis.IO {
 
     ///
     /// Represents a Reader.
+    /// Abstract class
     ///
     pub enum Reader[_: Region](##java.io.Reader)
 
@@ -27,6 +28,8 @@ mod Basis.IO {
 mod Basis.IO.Reader {
 
 
+    /// Abstract / no constructors...
+    
     pub def close!(r: Reader[r]): Result[String, Unit] \ r = 
         Result.tryCatch(_ -> {
             import java.io.Reader.close(): Unit \ r;

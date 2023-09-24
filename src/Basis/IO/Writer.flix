@@ -19,6 +19,7 @@ mod Basis.IO {
 
     ///
     /// Represents a Writer.
+    /// Abstract class
     ///
     pub enum Writer[_: Region](##java.io.Writer)
 
@@ -26,6 +27,8 @@ mod Basis.IO {
 
 mod Basis.IO.Writer {
 
+
+    /// Abstract / no constructors...
 
     pub def close!(w: Writer[r]): Result[String, Unit] \ r = 
         Result.tryCatch(_ -> {

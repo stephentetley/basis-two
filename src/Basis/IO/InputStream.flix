@@ -19,6 +19,7 @@ mod Basis.IO {
 
     ///
     /// Represents an InputStream.
+    /// Abstract class
     ///
     pub enum InputStream[_: Region](##java.io.InputStream)
 
