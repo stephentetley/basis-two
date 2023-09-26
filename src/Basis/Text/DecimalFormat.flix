@@ -37,6 +37,25 @@ mod Basis.Text.DecimalFormat {
     use Basis.Util.Currency.{Currency}
 
 
+
+    pub type alias DecimalFormatBuilder = ##java.text.DecimalFormat -> Unit \ IO
+
+    ///
+    /// Create a DecimalFormat with the default format locale of the JVM.
+    ///
+    pub def new(): DecimalFormat \ IO =
+        import new java.text.DecimalFormat(): ##java.text.DecimalFormat \ IO as newDecimalFormatBuilder;
+        DecimalFormat(newDecimalFormatBuilder())
+
+    ///
+    /// Create a DecimalFormat with the default format locale of the JVM.
+    ///
+    pub def newWith(build: DecimalFormatBuilder): DecimalFormat \ IO =
+        import new java.text.DecimalFormat(): ##java.text.DecimalFormat \ IO as newDecimalFormatBuilder;
+        let df1 = newDecimalFormatBuilder();
+        build(df1);
+        DecimalFormat(df1)
+
     pub def hashCode(df: DecimalFormat): Int32 =
         import java.text.DecimalFormat.hashCode(): Int32 \ {};
         let DecimalFormat(df1) = df;
@@ -99,5 +118,11 @@ mod Basis.Text.DecimalFormat {
         })
 
 
+
+    /// Imperative, but not run after initialization
+    pub def setCurrency!(currency: Currency): DecimalFormatBuilder = df -> 
+        import java.text.DecimalFormat.setCurrency(##java.util.Currency): Unit \ IO;
+        let Currency(currency1) = currency;
+        setCurrency(df, currency1)
 
 }
