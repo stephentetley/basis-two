@@ -138,6 +138,14 @@ mod Basis.Text.Collator {
 
     pub enum CollatorBuilder[r: Region](##java.text.Collator -> Unit \ r)
 
+    pub def andThen(b1: CollatorBuilder[r], b2: CollatorBuilder[r]): CollatorBuilder[r] = 
+        CollatorBuilder(build -> 
+            let CollatorBuilder(f1) = b1;
+            let CollatorBuilder(f2) = b2;
+            f1(build);
+            f2(build)
+        )
+
     ///
     /// Get a Collator with the locale of the JVM.
     ///

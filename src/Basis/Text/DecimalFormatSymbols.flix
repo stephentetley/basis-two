@@ -48,6 +48,16 @@ mod Basis.Text.DecimalFormatSymbols {
 
     pub enum DecimalFormatSymbolsBuilder[r: Region](##java.text.DecimalFormatSymbols -> Result[String, Unit] \ r)
 
+    pub def andThen(b1: DecimalFormatSymbolsBuilder[r], b2: DecimalFormatSymbolsBuilder[r]): DecimalFormatSymbolsBuilder[r] = 
+        DecimalFormatSymbolsBuilder(build -> 
+            let DecimalFormatSymbolsBuilder(f1) = b1;
+            let DecimalFormatSymbolsBuilder(f2) = b2;
+            match f1(build) {
+                case Ok()   => f2(build)
+                case Err(e) => Err(e)
+            }
+            
+        )
 
     ///
     /// Returns a new DecimalFormatSymbols object.

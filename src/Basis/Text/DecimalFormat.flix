@@ -43,6 +43,14 @@ mod Basis.Text.DecimalFormat {
     pub enum DecimalFormatBuilder[r: Region](##java.text.DecimalFormat -> Unit \ r)
 
 
+    pub def andThen(b1: DecimalFormatBuilder[r], b2: DecimalFormatBuilder[r]): DecimalFormatBuilder[r] = 
+        DecimalFormatBuilder(build -> 
+            let DecimalFormatBuilder(f1) = b1;
+            let DecimalFormatBuilder(f2) = b2;
+            f1(build);
+            f2(build)
+        )
+
     ///
     /// Create a DecimalFormat with the default format locale of the JVM.
     ///
