@@ -39,7 +39,7 @@ mod Basis.Text.Collator {
     use Basis.Text.Collator.DecompositionMode.{NoDecomposition, CanonicalDecomposition, FullDecomposition}
     use Basis.Text.Collator.Strength
     use Basis.Text.Collator.Strength.{Identical, Primary, Secondary, Tertiary}
-    
+    use Basis.Text.Collator.CollatorBuilder.{CollatorBuilder}
     
     // Note - Java's Collator dates from 1.1 and predates enums (1.5), I think the use of 
     // enums here is safe.
@@ -136,15 +136,16 @@ mod Basis.Text.Collator {
 
 
 
-    pub type alias CollatorBuilder = ##java.text.Collator -> Unit \ IO
+    pub enum CollatorBuilder[r: Region](##java.text.Collator -> Unit \ r)
 
     ///
     /// Get a Collator with the locale of the JVM.
     ///
-    pub def getInstanceWith(build: CollatorBuilder): Collator \ IO =
+    pub def getInstanceWith(_: Region[r], build: CollatorBuilder[r]): Collator \ {IO, r} =
         import static java.text.Collator.getInstance(): ##java.text.Collator \ IO;
         let c1 = getInstance();
-        build(c1);
+        let CollatorBuilder(build1) = build;
+        build1(c1);
         Collator(c1)
 
     pub def getInstanceWithLocale(loc: Locale): Collator =
@@ -153,11 +154,12 @@ mod Basis.Text.Collator {
         let c1 = getInstance(loc1);
         Collator(c1)
 
-    pub def getInstanceWithLocaleWith(loc: Locale, build: CollatorBuilder): Collator \ IO =
+    pub def getInstanceWithLocaleWith(_: Region[r], loc: Locale, build: CollatorBuilder[r]): Collator \ r =
         import static java.text.Collator.getInstance(##java.util.Locale): ##java.text.Collator \ {};
         let Locale(loc1) = loc;
         let c1 = getInstance(loc1);
-        build(c1);
+        let CollatorBuilder(build1) = build;
+        build1(c1);
         Collator(c1)
 
 
@@ -199,17 +201,20 @@ mod Basis.Text.Collator {
         CollationKey(getCollationKey(c1, src))
 
     /// Imperative, but not run after initialization
-    pub def setDecompositionMode!(mode: DecompositionMode): CollatorBuilder = col -> 
-        import java.text.Collator.setDecomposition(Int32): Unit \ IO;
-        let mode1 = decompositionModeToJava(mode);
-        setDecomposition(col, mode1)
-
+    pub def setDecompositionMode!(mode: DecompositionMode): CollatorBuilder[r] = 
+        CollatorBuilder(col ->
+            import java.text.Collator.setDecomposition(Int32): Unit \ r;
+            let mode1 = decompositionModeToJava(mode);
+            setDecomposition(col, mode1)
+        )
 
     /// Imperative, but not run after initialization
-    pub def setStrength!(strength: Strength): CollatorBuilder = col -> 
-        import java.text.Collator.setStrength(Int32): Unit \ IO;
-        let strength1 = strengthToJava(strength);
-        setStrength(col, strength1)
+    pub def setStrength!(strength: Strength): CollatorBuilder[r] = 
+        CollatorBuilder(col -> 
+            import java.text.Collator.setStrength(Int32): Unit \ r;
+            let strength1 = strengthToJava(strength);
+            setStrength(col, strength1)
+        )
 
 
 }

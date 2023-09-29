@@ -35,6 +35,7 @@ mod Basis.Text.RuleBasedCollator {
     use Basis.Text.Collator
     use Basis.Text.Collator.{Collator}
     use Basis.Text.Collator.CollatorBuilder
+    use Basis.Text.Collator.CollatorBuilder.{CollatorBuilder}
 
     ///
     /// Get a Collator from the rules.
@@ -46,12 +47,13 @@ mod Basis.Text.RuleBasedCollator {
             RuleBasedCollator(newRuleBasedCollator(rules))
         })
     
-    pub def newWith(rules: String, build: CollatorBuilder): Result[String, RuleBasedCollator] \ IO = 
+    pub def newWith(_: Region[r], rules: String, build: CollatorBuilder[r]): Result[String, RuleBasedCollator] \ r = 
         Result.tryCatch(_ -> {
             import new java.text.RuleBasedCollator(String): ##java.text.RuleBasedCollator \ {} as newRuleBasedCollator;
             let rbc1 = newRuleBasedCollator(rules);
             let c1   = unchecked_cast(rbc1 as ##java.text.Collator); 
-            build(c1);
+            let CollatorBuilder(build1) = build;
+            build1(c1);
             RuleBasedCollator(rbc1)
         })
 

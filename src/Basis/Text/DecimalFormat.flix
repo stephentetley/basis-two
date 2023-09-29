@@ -26,19 +26,22 @@ mod Basis.Text {
         pub def hash(x: DecimalFormat): Int32 = 
             Basis.Text.DecimalFormat.hashCode(x)
     }
+
+
 }
 
 
 mod Basis.Text.DecimalFormat {
 
     use Basis.Text.DecimalFormat.{DecimalFormat}
+    use Basis.Text.DecimalFormat.DecimalFormatBuilder.{DecimalFormatBuilder}
 
     use Basis.Util.Currency
     use Basis.Util.Currency.{Currency}
 
 
+    pub enum DecimalFormatBuilder[r: Region](##java.text.DecimalFormat -> Unit \ r)
 
-    pub type alias DecimalFormatBuilder = ##java.text.DecimalFormat -> Unit \ IO
 
     ///
     /// Create a DecimalFormat with the default format locale of the JVM.
@@ -48,12 +51,13 @@ mod Basis.Text.DecimalFormat {
         DecimalFormat(newDecimalFormatBuilder())
 
     ///
-    /// Create a DecimalFormat with the default format locale of the JVM.
+    /// Create a DecimalFormat with the builder.
     ///
-    pub def newWith(build: DecimalFormatBuilder): DecimalFormat \ IO =
-        import new java.text.DecimalFormat(): ##java.text.DecimalFormat \ IO as newDecimalFormatBuilder;
+    pub def newWith(_: Region[r], build: DecimalFormatBuilder[r]): DecimalFormat \ r =
+        import new java.text.DecimalFormat(): ##java.text.DecimalFormat \ {} as newDecimalFormatBuilder;
         let df1 = newDecimalFormatBuilder();
-        build(df1);
+        let DecimalFormatBuilder(build1) = build;
+        build1(df1);
         DecimalFormat(df1)
 
     pub def hashCode(df: DecimalFormat): Int32 =
@@ -120,9 +124,17 @@ mod Basis.Text.DecimalFormat {
 
 
     /// Imperative, but not run after initialization
-    pub def setCurrency!(currency: Currency): DecimalFormatBuilder = df -> 
-        import java.text.DecimalFormat.setCurrency(##java.util.Currency): Unit \ IO;
-        let Currency(currency1) = currency;
-        setCurrency(df, currency1)
+    pub def setCurrency!(currency: Currency): DecimalFormatBuilder[r] = 
+        DecimalFormatBuilder(df -> 
+            import java.text.DecimalFormat.setCurrency(##java.util.Currency): Unit \ r;
+            let Currency(currency1) = currency;
+            setCurrency(df, currency1)
+        )
+
+    pub def setDecimalSeparatorAlwaysShown!(shown: Bool): DecimalFormatBuilder[r] = 
+        DecimalFormatBuilder(df -> 
+            import java.text.DecimalFormat.setDecimalSeparatorAlwaysShown(Bool): Unit \ r;
+            setDecimalSeparatorAlwaysShown(df, shown)
+        )
 
 }

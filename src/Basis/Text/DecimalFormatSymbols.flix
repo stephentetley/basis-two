@@ -40,12 +40,13 @@ mod Basis.Text.DecimalFormatSymbols {
 
     use Basis.Text.DecimalFormatSymbols
     use Basis.Text.DecimalFormatSymbols.{DecimalFormatSymbols}
+    use Basis.Text.DecimalFormatSymbols.DecimalFormatSymbolsBuilder.{DecimalFormatSymbolsBuilder}
 
     use Basis.Util.Currency
     use Basis.Util.Currency.{Currency}
     use Locale.{Locale}
 
-    pub type alias DecimalFormatSymbolsBuilder = ##java.text.DecimalFormatSymbols -> Result[String, Unit] \ IO
+    pub enum DecimalFormatSymbolsBuilder[r: Region](##java.text.DecimalFormatSymbols -> Result[String, Unit] \ r)
 
 
     ///
@@ -55,6 +56,17 @@ mod Basis.Text.DecimalFormatSymbols {
     pub def new(): DecimalFormatSymbols \ IO =
         import new java.text.DecimalFormatSymbols(): ##java.text.DecimalFormatSymbols \ IO as newDecimalFormatSymbols;
         DecimalFormatSymbols(newDecimalFormatSymbols())
+
+    ///
+    /// Returns a new DecimalFormatSymbols object.
+    /// Uses the (implicit) default locale, hence in IO
+    ///
+    pub def newWith(_: Region[r], build: DecimalFormatSymbolsBuilder[r]): Result[String, DecimalFormatSymbols] \ IO =
+        import new java.text.DecimalFormatSymbols(): ##java.text.DecimalFormatSymbols \ IO as newDecimalFormatSymbols;
+        let dfs = newDecimalFormatSymbols();
+        let DecimalFormatSymbolsBuilder(build1) = build;
+        build1(dfs) |> Result.map(_ -> DecimalFormatSymbols(dfs))
+
 
     ///
     /// Returns a new DecimalFormatSymbols object derived from the locale.
@@ -91,10 +103,11 @@ mod Basis.Text.DecimalFormatSymbols {
         import static java.text.DecimalFormatSymbols.getInstance(): ##java.text.DecimalFormatSymbols \ IO;
         DecimalFormatSymbols(getInstance())
 
-    pub def getInstanceWith(build: DecimalFormatSymbolsBuilder): Result[String, DecimalFormatSymbols] \ IO = 
+    pub def getInstanceWith(_: Region[r], build: DecimalFormatSymbolsBuilder[r]): Result[String, DecimalFormatSymbols] \ {IO, r} = 
         import static java.text.DecimalFormatSymbols.getInstance(): ##java.text.DecimalFormatSymbols \ IO;
         let dfs1 = getInstance();
-        build(dfs1) |> Result.map(_ -> DecimalFormatSymbols(dfs1))
+        let DecimalFormatSymbolsBuilder(build1) = build;
+        build1(dfs1) |> Result.map(_ -> DecimalFormatSymbols(dfs1))
 
 
     pub def getInstanceWithLocale(loc: Locale): Result[String, DecimalFormatSymbols] = 
@@ -104,12 +117,18 @@ mod Basis.Text.DecimalFormatSymbols {
             DecimalFormatSymbols(getInstance(loc1))
         })
 
-    pub def getInstanceWithLocaleWith(loc: Locale, build: DecimalFormatSymbolsBuilder): Result[String, DecimalFormatSymbols] \ IO = 
-        Result.tryCatch(_ -> {
+    pub def getInstanceWithLocaleWith(_: Region[r], loc: Locale, build: DecimalFormatSymbolsBuilder[r]): Result[String, DecimalFormatSymbols] \ r = 
+        try {
             import static java.text.DecimalFormatSymbols.getInstance(##java.util.Locale): ##java.text.DecimalFormatSymbols \ {};
             let Locale(loc1) = loc;
-            getInstance(loc1)
-        }) |> Result.flatMap(dfs1 -> build(dfs1) |> Result.map(_ -> DecimalFormatSymbols(dfs1))) 
+            let DecimalFormatSymbolsBuilder(build1) = build;    
+            let dfs = getInstance(loc1);
+            build1(dfs) |> Result.map(_ -> DecimalFormatSymbols(dfs))
+        } catch {
+            case e: ##java.lang.Exception =>
+                import java.lang.Throwable.getMessage(): String \ {};
+                Err(getMessage(e))
+        }
 
     pub def getCurrency(dfs: DecimalFormatSymbols): Option[Currency] =
         import java.text.DecimalFormatSymbols.getCurrency(): ##java.util.Currency \ {};
@@ -198,99 +217,120 @@ mod Basis.Text.DecimalFormatSymbols {
         getZeroDigit(dfs1)        
 
 
-    /// Setters
+    /// Builder Setters
 
         
-    pub def setCurrency!(c: Currency): DecimalFormatSymbolsBuilder = dfs -> 
-        Result.tryCatch(_ -> {
-            import java.text.DecimalFormatSymbols.setCurrency(##java.util.Currency): Unit \ IO;
-            let Currency(c1) = c;
-            setCurrency(dfs, c1)
-        })
+    pub def setCurrency!(c: Currency): DecimalFormatSymbolsBuilder[r] = 
+        DecimalFormatSymbolsBuilder(dfs -> 
+            Result.tryCatch(_ -> {
+                import java.text.DecimalFormatSymbols.setCurrency(##java.util.Currency): Unit \ r;
+                let Currency(c1) = c;
+                setCurrency(dfs, c1)
+            })
+        )
 
-    pub def setCurrencySymbol!(s: String): DecimalFormatSymbolsBuilder = dfs ->
-        Result.tryCatch(_ -> {
-            import java.text.DecimalFormatSymbols.setCurrencySymbol(String): Unit \ IO;
-            setCurrencySymbol(dfs, s)
-        })
+    pub def setCurrencySymbol!(s: String): DecimalFormatSymbolsBuilder[r] = 
+        DecimalFormatSymbolsBuilder(dfs ->
+            Result.tryCatch(_ -> {
+                import java.text.DecimalFormatSymbols.setCurrencySymbol(String): Unit \ r;
+                setCurrencySymbol(dfs, s)
+            })
+        )
 
-    pub def setDecimalSeparator!(c: Char): DecimalFormatSymbolsBuilder = dfs ->
-        Result.tryCatch(_ -> {
-            import java.text.DecimalFormatSymbols.setDecimalSeparator(Char): Unit \ IO;
-            setDecimalSeparator(dfs, c)
-        })
+    pub def setDecimalSeparator!(c: Char): DecimalFormatSymbolsBuilder[r] = 
+        DecimalFormatSymbolsBuilder(dfs ->
+            Result.tryCatch(_ -> {
+                import java.text.DecimalFormatSymbols.setDecimalSeparator(Char): Unit \ r;
+                setDecimalSeparator(dfs, c)
+            })
+        )
 
-    pub def setDigit!(c: Char): DecimalFormatSymbolsBuilder = dfs ->
-        Result.tryCatch(_ -> {
-            import java.text.DecimalFormatSymbols.setDigit(Char): Unit \ IO;
-            setDigit(dfs, c)
-        })
+    pub def setDigit!(c: Char): DecimalFormatSymbolsBuilder[r] = 
+        DecimalFormatSymbolsBuilder(dfs ->
+            Result.tryCatch(_ -> {
+                import java.text.DecimalFormatSymbols.setDigit(Char): Unit \ r;
+                setDigit(dfs, c)
+            })
+        )
 
+    pub def setExponentSeparator!(s: String): DecimalFormatSymbolsBuilder[r] = 
+        DecimalFormatSymbolsBuilder(dfs ->
+            Result.tryCatch(_ -> {
+                import java.text.DecimalFormatSymbols.setExponentSeparator(String): Unit \ r;
+                setExponentSeparator(dfs, s)
+            })
+        )
 
-    pub def setExponentSeparator!(s: String): DecimalFormatSymbolsBuilder = dfs ->
-        Result.tryCatch(_ -> {
-            import java.text.DecimalFormatSymbols.setExponentSeparator(String): Unit \ IO;
-            setExponentSeparator(dfs, s)
-        })
+    pub def setInfinity!(s: String): DecimalFormatSymbolsBuilder[r] = 
+        DecimalFormatSymbolsBuilder(dfs ->
+            Result.tryCatch(_ -> {
+                import java.text.DecimalFormatSymbols.setInfinity(String): Unit \ r;
+                setInfinity(dfs, s)
+            })
+        )
 
-    pub def setInfinity!(s: String): DecimalFormatSymbolsBuilder = dfs ->
-        Result.tryCatch(_ -> {
-            import java.text.DecimalFormatSymbols.setInfinity(String): Unit \ IO;
-            setInfinity(dfs, s)
-        })
+    pub def setInternationalCurrencySymbol!(s: String): DecimalFormatSymbolsBuilder[r] = 
+        DecimalFormatSymbolsBuilder(dfs ->
+            Result.tryCatch(_ -> {
+                import java.text.DecimalFormatSymbols.setInternationalCurrencySymbol(String): Unit \ r;
+                setInternationalCurrencySymbol(dfs, s)
+            })
+        )
 
+    pub def setMinusSign!(c: Char): DecimalFormatSymbolsBuilder[r] = 
+        DecimalFormatSymbolsBuilder(dfs ->
+            Result.tryCatch(_ -> {
+                import java.text.DecimalFormatSymbols.setMinusSign(Char): Unit \ r;
+                setMinusSign(dfs, c)
+            })
+        )
 
-    pub def setInternationalCurrencySymbol!(s: String): DecimalFormatSymbolsBuilder = dfs ->
-        Result.tryCatch(_ -> {
-            import java.text.DecimalFormatSymbols.setInternationalCurrencySymbol(String): Unit \ IO;
-            setInternationalCurrencySymbol(dfs, s)
-        })
+    pub def setMonetaryDecimalSeparator!(c: Char): DecimalFormatSymbolsBuilder[r] = 
+        DecimalFormatSymbolsBuilder(dfs ->
+            Result.tryCatch(_ -> {
+                import java.text.DecimalFormatSymbols.setMonetaryDecimalSeparator(Char): Unit \ r;
+                setMonetaryDecimalSeparator(dfs, c)
+            })
+        )
 
-    pub def setMinusSign!(c: Char): DecimalFormatSymbolsBuilder = dfs ->
-        Result.tryCatch(_ -> {
-            import java.text.DecimalFormatSymbols.setMinusSign(Char): Unit \ IO;
-            setMinusSign(dfs, c)
-        })
+    pub def setNaN!(s: String): DecimalFormatSymbolsBuilder[r] = 
+        DecimalFormatSymbolsBuilder(dfs ->
+            Result.tryCatch(_ -> {
+                import java.text.DecimalFormatSymbols.setNaN(String): Unit \ r;
+                setNaN(dfs, s)
+            })
+        )
 
-    pub def setMonetaryDecimalSeparator!(c: Char): DecimalFormatSymbolsBuilder = dfs ->
-        Result.tryCatch(_ -> {
-            import java.text.DecimalFormatSymbols.setMonetaryDecimalSeparator(Char): Unit \ IO;
-            setMonetaryDecimalSeparator(dfs, c)
-        })
+    pub def setPatternSeparator!(c: Char): DecimalFormatSymbolsBuilder[r] = 
+        DecimalFormatSymbolsBuilder(dfs ->
+            Result.tryCatch(_ -> {
+                import java.text.DecimalFormatSymbols.setPatternSeparator(Char): Unit \ r;
+                setPatternSeparator(dfs, c)
+            })
+        )
 
+    pub def setPercent!(c: Char): DecimalFormatSymbolsBuilder[r] = 
+        DecimalFormatSymbolsBuilder(dfs ->
+            Result.tryCatch(_ -> {
+                import java.text.DecimalFormatSymbols.setPercent(Char): Unit \ r;
+                setPercent(dfs, c)
+            })
+        )
 
-    pub def setNaN!(s: String): DecimalFormatSymbolsBuilder = dfs ->
-        Result.tryCatch(_ -> {
-            import java.text.DecimalFormatSymbols.setNaN(String): Unit \ IO;
-            setNaN(dfs, s)
-        })
+    pub def setPerMill!(c: Char): DecimalFormatSymbolsBuilder[r] = 
+        DecimalFormatSymbolsBuilder(dfs ->
+            Result.tryCatch(_ -> {
+                import java.text.DecimalFormatSymbols.setPerMill(Char): Unit \ r;
+                setPerMill(dfs, c)
+            })
+        )
 
-
-    pub def setPatternSeparator!(c: Char): DecimalFormatSymbolsBuilder = dfs ->
-        Result.tryCatch(_ -> {
-            import java.text.DecimalFormatSymbols.setPatternSeparator(Char): Unit \ IO;
-            setPatternSeparator(dfs, c)
-        })
-
-
-    pub def setPercent!(c: Char): DecimalFormatSymbolsBuilder = dfs ->
-        Result.tryCatch(_ -> {
-            import java.text.DecimalFormatSymbols.setPercent(Char): Unit \ IO;
-            setPercent(dfs, c)
-        })
-
-
-    pub def setPerMill!(c: Char): DecimalFormatSymbolsBuilder = dfs ->
-        Result.tryCatch(_ -> {
-            import java.text.DecimalFormatSymbols.setPerMill(Char): Unit \ IO;
-            setPerMill(dfs, c)
-        })
-
-
-    pub def setZeroDigit!(c: Char): DecimalFormatSymbolsBuilder = dfs ->
-        Result.tryCatch(_ -> {
-            import java.text.DecimalFormatSymbols.setZeroDigit(Char): Unit \ IO;
-            setZeroDigit(dfs, c)
-        })
+    pub def setZeroDigit!(c: Char): DecimalFormatSymbolsBuilder[r] = 
+        DecimalFormatSymbolsBuilder(dfs ->
+            Result.tryCatch(_ -> {
+                import java.text.DecimalFormatSymbols.setZeroDigit(Char): Unit \ r;
+                setZeroDigit(dfs, c)
+            })
+        )
 
 }
